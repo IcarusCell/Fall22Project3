@@ -1,5 +1,9 @@
 import os
 
+#------MENU-------
+#- Drop Items
+#   Implemented first. Adds the item back to the list of items in the room.
+
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -45,4 +49,12 @@ class Player:
             self.alive = False
         print()
         input("Press enter to continue...")
-
+    def drop_item(self, item):
+        print(self.items)
+        print(item)
+        for i,ent in enumerate(self.items):
+            if ent.name.lower() == item.lower():
+                self.location.items.append(ent)
+                self.items.remove(ent)
+                return True
+        return False

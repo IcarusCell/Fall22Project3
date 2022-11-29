@@ -1,6 +1,12 @@
 import random
 import updater
 
+class Demon_Spider:
+    def __init__(self, room):
+        room.add_monster(self)
+        updater.register(self)
+        
+
 class Monster:
     def __init__(self, name, health, room):
         self.name = name
