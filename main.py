@@ -1,38 +1,79 @@
 from room import Room
 from player import Player
 from item import Item
+import random
 from monster import Monster
 import os
 import updater
+
+#------MENU-------
+#- Drop Items
+#   Implemented first. Adds the item back to the list of items in the room.
+#- Map Expansion
+#   Implemented, to be expanded upon as the game develops. Game takes place in a school, central area is 4x4 with several rooms branching off.
+#- Search function
+#   Allows the player to effectively take a turn off in order to search a room for an item that may not be on the items list already.
 
 player = Player()
 
 def create_world():
 
-    #Nurse's Office
+    #Nurse's Office, connects to north_hallway_B.
     nurse_office = Room("You enter a poorly lit, sterile feeling white room. \n Judging by the wax paper covered exam table and the various medications scattered across the floor, this is probably some sort of nurses office. \n To your south is the door you entered the room from.")
-    north_hallway_1 = Room("You enter  another hallway flanked by row after row of lockers, all rusted with half the doors hanging off their hinges.\n To the north is a white door hanging on its hinges.\n To the east the hallway extends in a similar way. \n To the west the hallway curves southward, its extension escaping your view.")
-    north_hallway_2 = Room("The hallway you walk through is similar to all the others. \n Numerous lockers against the walls alongside a wall of coat hangers where a fair few ragged coats flutter in the light wind that passes through this place. \n To the south is a pair of double doors with a large sign hanging above labeled 'CAFETERIA'. \n To the west the lockers continue along the walls, while to the east the hallway turns a corner. \n Finally, to the north, a wooden door with a sign labeled 'CLASSROOM 3A' stands closed.")
+
+    #Two hallway tiles in the north zone of the map
+    north_hallway_A = Room("You enter a hallway flanked by row after row of lockers, all rusted with half the doors hanging off their hinges.\n To the north is a white door hanging on its hinges.\n To the east the hallway extends in a similar way. \n To the west the hallway curves southward, its extension escaping your view.")
+    north_hallway_B = Room("The hallway you walk through is similar to all the others. \n Numerous lockers against the walls alongside a wall of coat hangers where a fair few ragged coats flutter in the light wind that passes through this place. \n To the south is a pair of double doors with a large sign hanging above labeled 'CAFETERIA'. \n To the west the lockers continue along the walls, while to the east the hallway turns a corner. \n Finally, to the north, a wooden door with a sign labeled 'CLASSROOM 3A' stands closed.")
+
+    top_right_corner = Room('You walk through the north eastern corner of the school. \n Lockers follow the left wall while benches sparsely occupy the right. \n To the west and south the rows of lockers extend out into the fog.')
+    top_left_corner = Room('You walk through the north western corner of the school. \n Lockers follow the left wall while benches sparsely occupy the right. \n To the east and south the rows of lockers extend out into the fog.')
+
+    east_hallway_A = Room('You step into a lengthy hallway with mist clinging to the floor like a dense web. \n Rusty lockers flank you on your left and right. \n To the south the hallway continues onward while to the north the hallway turns toward the west.')
+    east_hallway_B = Room('This section of the hallway is just as dreary as the rest of this place. \n Mist obscures your vision and all you are able to see are the few benches to your left where students were likely supposed to wait for class. \n To the north the hallway continues onward, while to the south it turns a corner heading westward.')
+
+    west_hallway_A = Room('The school\'s cracked bricks extend forward until they vanish out of sight, covered by the mist. \n To the north you can make out a turn in the hallway heading eastward, while to the south this path continues straight onward.')
+    west_hallway_B = Room('The hallway you enter, although filled with lockers on the right wall, also contains a few vending machines that appear to be completely non-functional. \n To the north the hallway appears to continue onward in a straight line, although the mist makes it hard to tell. \n To the south the hallway curves eastward seeming to connect back to the front door.')
+
+    south_hallway_A = Room('Your steps echo through this mist filled hallway. \n The white fluorescent lights periodically spark ominously overhead. \n The thick mist that permeates the school makes it hard to see, but to the west the hallway appears to bend towards the northern part of the school. \n To the east the hallway proceeds in a straight line.')
+    south_hallway_B = Room('You enter a hallway, rust covering encrusting the hinges of every locker shoddily propped up against the brick walls. \n To the west the lockers vanish into the misty hallway, continuing in a straight line. \n To the east the hallway appears to turn the corner, leading up towards the northern section of the school.')
+
+    bottom_left_corner = Room('You walk through the south western corner of the school. \n Lockers follow the left wall while benches sparsely occupy the right. \n To the east and north the rows of lockers extend out into the fog.')
+    bottom_right_corner = Room('You walk through the south eastern corner of the school. \n Lockers follow the left wall while benches sparsely occupy the right. \n To the west and north the rows of lockers extend out into the fog.')
+
+    #Cafeteria zone, central four squares of the map. Open space where each square can see each other.
     cafeteria_1B = Room("You walk into the top right corner of the cafeteria. \n The wall is covered in a series of vending machines, all of which appear to be nonfunctional. \n To the north a set of double doors appear to lead out into a hallway. \n To the south the sprawling cafeteria continues onward to the area where orders appear to have been taken. \n To the west lies one end of the sprawling cafeteria tables where students used to enjoy their meals.")
-    cafeteria_1A = Room("This area is filled with cafeteria tables, speckles of ominous looking gunk festering under the chairs. \n To the east the cafeteria continues into the vending machine area alongside a door that seems to lead outside. \n To the south lies the rest of the cafeteria tables, equally abandoned and covered in unknown substances.")
-    a = Room("You are in room 1")
-    b = Room("You are in room 2")
-    c = Room("You are in room 3")
-    d = Room("You are in room 4")
+    cafeteria_1A = Room("This area is filled with cafeteria tables, speckles of ominous looking gunk festering under the chairs. \n To the east the cafeteria continues into the vending machine area alongside a door that seems to lead outside. \n To the south lies the rest of the cafeteria tables, equally abandoned and covered in unknown substances and a pair of double doors that appear to lead out into the main corridor.")
+    cafeteria_2A = Room("You enter the bottom left corner of the cafeteria. \n Long, pale blue cafeteria tables flanked by chairs extend through the whole room up toward the top left corner of the cafeteria. \n To the east you see the buffet style area where orders seem to have been taken. \n To your south lie a set of double doors that seem to lead out into the primary school corridor.")
+    cafeteria_2B = Room("As you walk into the bottom right corner of the cafeteria, the scent of rotting food hits you with staggering force. \n Pounds of rotting food seem to lie within the buffet style counter, it seems that no one cleaned it out after the school shut down. \n To the north is the vending machine section of the cafeteria alongside a set of doors that lead out into the north hallway. \n To the east is one end of the long cafeteria tables alongside another set of doors leading to the southern side of the school.")
 
-    Room.connect_rooms(nurse_office, 'south', north_hallway_1, 'north')
-    Room.connect_rooms(north_hallway_1, 'east', north_hallway_2, 'west')
-    Room.connect_rooms(cafeteria_1B, 'north', north_hallway_2, 'south')
+    #Connecting the ring of hallways
+    Room.connect_rooms(north_hallway_A, 'east', north_hallway_B, 'west')
+    Room.connect_rooms(north_hallway_B, 'east', top_right_corner, 'west')
+    Room.connect_rooms(top_right_corner, 'south', east_hallway_A, 'north')
+    Room.connect_rooms(east_hallway_A, 'south', east_hallway_B, 'north')
+    Room.connect_rooms(east_hallway_B, 'south', bottom_right_corner, 'north')
+    Room.connect_rooms(bottom_right_corner, 'west', south_hallway_B, 'east')
+    Room.connect_rooms(south_hallway_B, 'west', south_hallway_A, 'east')
+    Room.connect_rooms(south_hallway_A, 'west', bottom_left_corner, 'east')
+    Room.connect_rooms(west_hallway_B, 'south', bottom_left_corner, 'north')
+    Room.connect_rooms(west_hallway_A, 'south', west_hallway_B, 'north')
+    Room.connect_rooms(west_hallway_A, 'north', top_left_corner, 'south')
+    Room.connect_rooms(top_left_corner, 'east', north_hallway_A, 'west')
+
+
+
+
+    Room.connect_rooms(nurse_office, 'south', north_hallway_A, 'north')
+    Room.connect_rooms(cafeteria_1B, 'north', north_hallway_B, 'south')
+
+    #Constructing interior cafeteria connections (connecting the central 4 squares of the map).
     Room.connect_rooms(cafeteria_1A, 'east', cafeteria_1B, 'west')
+    Room.connect_rooms(cafeteria_1A, 'south', cafeteria_2A, 'north')
+    Room.connect_rooms(cafeteria_2A, 'east', cafeteria_2B, 'west')
 
-    Room.connect_rooms(a, "east", b, "west")
-    Room.connect_rooms(c, "east", d, "west")
-    Room.connect_rooms(a, "north", c, "south")
-    Room.connect_rooms(b, "north", d, "south")
     i = Item("Rock", "This is just a rock.")
-    i.put_in_room(b)
-    player.location = cafeteria_1A
-    Monster("Bob the monster", 20, b)
+    north_hallway_A.add_searchable_item(i)
+    player.location = north_hallway_A
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -61,8 +102,11 @@ def show_help():
     print("go <direction> -- moves you in the given direction")
     print("inventory -- opens your inventory")
     print("pickup <item> -- picks up the item")
-    print("quit -- quits the game")
     print("drop <item> -- drops the item")
+    print("me -- prints the players current status")
+    print("search -- searches a given room for items, different rooms can provide different items.")
+    print("quit -- quits the game")
+
     print()
     input("Press enter to continue...")
 
@@ -117,6 +161,20 @@ if __name__ == "__main__":
                         print(f"The {command_words[1]} tumbles into the dirt.")
                     else:
                         print(f"You do not have any {command_words[1]}")
+                case "search":
+                    check = random.random()
+                    if len(player.location.searchable_items)>0:
+                        if check < player.search_chance:
+                            item_num = random.randint(0, len(player.location.searchable_items)-1)
+                            player.location.items.append(player.location.searchable_items[item_num])
+                            print(f"You succesfully find {player.location.searchable_items[item_num].name} hidden in the room!")
+                            del player.location.searchable_items[item_num]
+                        else:
+                            print('You failed to find anything here, although you feel like you might if you keep searching...')
+                    else:
+                        print('You failed to find anything here. There probably isn\'t anything left for you to find.')
+                    updater.update_all()
+
                 case other:
                     print("Not a valid command")
                     command_success = False

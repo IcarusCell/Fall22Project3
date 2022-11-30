@@ -11,6 +11,7 @@ class Player:
     def __init__(self):
         self.location = None
         self.items = []
+        self.search_chance = 0.5
         self.health = 50
         self.alive = True
     # goes in specified direction if possible, returns True

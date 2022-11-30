@@ -6,6 +6,7 @@ class Room:
         self.monsters = []
         self.exits = []
         self.items = []
+        self.searchable_items = []
     def add_exit(self, exit_name, destination):
         self.exits.append([exit_name, destination])
     def get_destination(self, direction):
@@ -21,6 +22,8 @@ class Room:
         return [x[0] for x in self.exits]
     def add_item(self, item):
         self.items.append(item)
+    def add_searchable_item(self, searchable_item):
+        self.searchable_items.append(searchable_item)
     def remove_item(self, item):
         self.items.remove(item)
     def add_monster(self, monster):
