@@ -17,11 +17,13 @@ import updater
 #   Introduces the player to the concept of the game and various features
 #- Wait function(1)
 #   Allows the player to wait for 1 turn worth of time
+#- Hide function
+#   Allows the player to hide from the monster for one turn
+#- Containers
+#   Complex new object type. Allows for randomization and keys. Store multiple items that the player can collect.
 player = Player()
 
 def create_world():
-    container_chance = 0.1
-
 
     #Nurse's Office, connects to north_hallway_B.
     nurse_office = Room("You enter a poorly lit, sterile feeling white room. \n Judging by the wax paper covered exam table and the various medications scattered across the floor, this is probably some sort of nurses office. \n To your south is the door you entered the room from.")
@@ -76,12 +78,13 @@ def create_world():
     Room.connect_rooms(cafeteria_1A, 'south', cafeteria_2A, 'north')
     Room.connect_rooms(cafeteria_2A, 'east', cafeteria_2B, 'west')
 
-
-    for room in Room.rooms:
-
-
-
     i = Item("Rock", "This is just a rock.")
+    for room in Room.rooms:
+        room.searchable_items.append(i)
+        room.add_container_with_searchable('Chest', 'A large chest, possibly containing an item.')
+
+
+
     north_hallway_A.add_searchable_item(i)
     player.location = north_hallway_A
 
@@ -102,6 +105,10 @@ def print_situation():
         for i in player.location.items:
             print(i.name)
         print()
+    if player.location.has_containers():
+        print("This room contains the following containers:")
+        for i in player.location.containers:
+            print(i.name)
     print("You can go in the following directions:")
     for e in player.location.exit_names():
         print(e)
@@ -116,6 +123,9 @@ def show_help():
     print("me -- prints the players current status")
     print("search -- searches a given room for items, different rooms can provide different items.")
     print("wait -- causes time to pass")
+    print("open <container> -- opens a container in a room")
+    print("hide -- allows you to hide in a room (if hiding spots are available) in order to escape the monster")
+    print("inspect <location> <entity> -- allows you to inspect an item or container. the 'location' argument can take the letters i,c, and r. i will inspect an item in your inventory with the passed in entity name, c will look for a container in the room you are in, and r will get the description of an item in your room")
     print("quit -- quits the game")
 
     print()
@@ -158,11 +168,24 @@ if __name__ == "__main__":
                     else:
                         print("No such item.")
                         command_success = False
+                case "open":
+                    target_name = command[5:]
+                    print(target_name)
+                    target = player.location.get_container_by_name(target_name.lower())
+                    if target != False:
+                        if target.needs_key_item == False:
+                            player.open(target)
+                        else:
+                            ''
+                    else:
+                        print("No such container.")
+                        command_success = False
+
                 case "inventory":
                     player.show_inventory()
                 case "help":
                     show_help()
-                case "exit":
+                case "quit":
                     playing = False
                 case "attack":
                     target_name = command[7:]
@@ -193,12 +216,49 @@ if __name__ == "__main__":
                 case "wait":
                     print('You wait around for a little while.')
                     time_passes = True
+                case "hide":
+                    if player.location.has_hiding_spots == True:
+                        print("You quietly slip into a hiding spot, attempting to avoid the monsters gaze.")
+                        player.is_hidden = True
+                        time_passes = True
+                    else:
+                        print("This room has no available hiding spots!")
+                        command_success = False
+                case "inspect":
+                    if len(command_words) == 3:
+                        target = command_words[2]
+                        print(target)
+                        in_list = False
+                        match command_words[1]:
+                            case "i":
+                                for i in player.items:
+                                    if i.name == target:
+                                        i.describe()
+                                        in_list = True
+                                if not in_list:
+                                    print(f'{target} is not in your inventory.')
+                            case "c":
+                                for i in player.location.containers:
+                                    if i.name.lower() == target.lower():
+                                        i.describe()
+                                        in_list = True
+                                if not in_list:
+                                    print(f'{target} is not a container in this room.')
+                            case "r":
+                                ''
+                            case other:
+                                print('Not a valid argument for the inspect command')
+                                command_success = False
+                    else:
+                        print('Wrong number of arguments for inspect command!')
+                        command_success = False
 
                 case other:
                     print("Not a valid command")
                     command_success = False
         if time_passes == True:
             updater.update_all()
+            player.is_hidden = False
 
 
 

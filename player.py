@@ -14,6 +14,7 @@ class Player:
         self.search_chance = 0.5
         self.wounded = False
         self.alive = True
+        self.is_hidden = False
     # goes in specified direction if possible, returns True
     # if not possible returns False
     def go_direction(self, direction):
@@ -26,6 +27,15 @@ class Player:
         self.items.append(item)
         item.loc = self
         self.location.remove_item(item)
+    def open(self, container):
+        print('From the container you grab:')
+        for i in container.items:
+            print(i.name)
+            i.loc = self
+            self.items.append(i)
+        print()
+        self.location.remove_container(container)
+
     def show_inventory(self):
         clear()
         print("You are currently carrying:")
@@ -59,3 +69,4 @@ class Player:
                 self.items.remove(ent)
                 return True
         return False
+

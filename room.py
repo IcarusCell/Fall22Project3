@@ -5,13 +5,14 @@ import containers
 
 class Room:
     rooms = []
-    def __init__(self, description):
+    def __init__(self, description, can_hide = True):
         self.desc = description
         self.monsters = []
         self.exits = []
         self.items = []
         self.searchable_items = []
         self.containers = []
+        self.has_hiding_spots = can_hide
         Room.rooms.append(self)
     def add_exit(self, exit_name, destination):
         self.exits.append([exit_name, destination])
@@ -55,3 +56,12 @@ class Room:
     def add_container_with_searchable(self, name, desc):
         cont = containers.Container(name, desc, None, None, self.searchable_items)
         self.containers.append(cont)
+    def has_containers(self):
+        return len(self.containers) > 0
+    def get_container_by_name(self, name):
+        for i in self.containers:
+            if i.name.lower() == name.lower():
+                return i
+        return False
+    def remove_container(self, container):
+        self.containers.remove(container)
