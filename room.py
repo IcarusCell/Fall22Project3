@@ -1,12 +1,18 @@
 import random
 
+import containers
+
+
 class Room:
+    rooms = []
     def __init__(self, description):
         self.desc = description
         self.monsters = []
         self.exits = []
         self.items = []
         self.searchable_items = []
+        self.containers = []
+        Room.rooms.append(self)
     def add_exit(self, exit_name, destination):
         self.exits.append([exit_name, destination])
     def get_destination(self, direction):
@@ -46,3 +52,6 @@ class Room:
         return False
     def random_neighbor(self):
         return random.choice(self.exits)[1]
+    def add_container_with_searchable(self, name, desc):
+        cont = containers.Container(name, desc, None, None, self.searchable_items)
+        self.containers.append(cont)

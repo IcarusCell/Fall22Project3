@@ -12,7 +12,7 @@ class Player:
         self.location = None
         self.items = []
         self.search_chance = 0.5
-        self.health = 50
+        self.wounded = False
         self.alive = True
     # goes in specified direction if possible, returns True
     # if not possible returns False

@@ -7,16 +7,21 @@ import os
 import updater
 
 #------MENU-------
-#- Drop Items
+#- Drop Items(1)
 #   Implemented first. Adds the item back to the list of items in the room.
-#- Map Expansion
+#- Map Expansion(2)
 #   Implemented, to be expanded upon as the game develops. Game takes place in a school, central area is 4x4 with several rooms branching off.
-#- Search function
+#- Search function(3)
 #   Allows the player to effectively take a turn off in order to search a room for an item that may not be on the items list already.
-
+#- Intro statement(1)
+#   Introduces the player to the concept of the game and various features
+#- Wait function(1)
+#   Allows the player to wait for 1 turn worth of time
 player = Player()
 
 def create_world():
+    container_chance = 0.1
+
 
     #Nurse's Office, connects to north_hallway_B.
     nurse_office = Room("You enter a poorly lit, sterile feeling white room. \n Judging by the wax paper covered exam table and the various medications scattered across the floor, this is probably some sort of nurses office. \n To your south is the door you entered the room from.")
@@ -71,6 +76,11 @@ def create_world():
     Room.connect_rooms(cafeteria_1A, 'south', cafeteria_2A, 'north')
     Room.connect_rooms(cafeteria_2A, 'east', cafeteria_2B, 'west')
 
+
+    for room in Room.rooms:
+
+
+
     i = Item("Rock", "This is just a rock.")
     north_hallway_A.add_searchable_item(i)
     player.location = north_hallway_A
@@ -105,6 +115,7 @@ def show_help():
     print("drop <item> -- drops the item")
     print("me -- prints the players current status")
     print("search -- searches a given room for items, different rooms can provide different items.")
+    print("wait -- causes time to pass")
     print("quit -- quits the game")
 
     print()
@@ -114,12 +125,17 @@ def show_help():
 if __name__ == "__main__":
     create_world()
     playing = True
+    print("Welcome to TBD! \n In this game you have to explore a decrepit school, hunting down three keys in order to escape. \n Be careful though, a terrifying monster is hunting you down! \n Type 'more' to get a further explanation on the features, otherwise press enter to begin the game!")
+    if input('More info/continue: ').lower() == 'more':
+        print("The monster is constantly roaming the school, entering and exiting rooms at random.\n If it sees you however, the chase will begin! \n Don't let yourself get caught, otherwise it's game over. \n While the monster is chasing you, you will be able to \'hide\' so that the monster won't be able to find you. \n There are also numerous items hidden around the map that can help you on your escape, keep an eye out! \n")
+        input('Now, press enter to begin the game.')
     while playing and player.alive:
         print_situation()
         command_success = False
         time_passes = False
         while not command_success:
             command_success = True
+
             command = input("What now? ")
             if len(command) == 0:
                 continue
@@ -173,13 +189,17 @@ if __name__ == "__main__":
                             print('You failed to find anything here, although you feel like you might if you keep searching...')
                     else:
                         print('You failed to find anything here. There probably isn\'t anything left for you to find.')
-                    updater.update_all()
+                        time_passes = True
+                case "wait":
+                    print('You wait around for a little while.')
+                    time_passes = True
 
                 case other:
                     print("Not a valid command")
                     command_success = False
         if time_passes == True:
             updater.update_all()
+
 
 
 
