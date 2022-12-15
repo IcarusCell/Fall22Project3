@@ -21,25 +21,32 @@ import updater
 #- Wait function(1)
 #   Allows the player to wait for 1 turn worth of time ----- Revision, wait allows the player to wait for any amount of time
 #- Hide function
-#   Allows the player to hide from the monster for one turn
-#- Containers
+#   Allows the player to hide from the monster for one turn, disabling the monster’s ability to harm the player
+#  Hideable rooms (3)
+#   Only certain rooms can be hidden in, making some rooms safer than others
+#- Containers (2)
 #   Complex new object type. Allows for randomization. Store multiple items that the player can collect.
-#- Me function
+#- Me function (2)
 #   Allows the player to check their status.
 #- Monster vision
-#   Partially functional at the moment, needs refining.
-#- Item expansion
-#   Items can have descriptions, as well as passive and active abilities
+#   Allows the monster to detect the proximity of the player
+#- Item expansion (3)
+#   Items can have descriptions, as well as passive and active abilities.
+#   Medkit implemented (2)
+#   Byproduct of item expansion, adds the ability for the player to regen health
 #- Advanced Monster tuning
 #   The monster's AI has been (marginally) refined. At this point it moves predictably in chase and randomly across the map until it finds the player again
-#- Win condition
+#- Win condition (2)
 #   The player must find three keys (randomly located in lockers placed around a certain part of the map) and move to the exit gates to escape
 #- Room tagging
 #   Minor feature mainly used in randomization. Certain rooms can be assigned tags and can therefor recieve different loot tables
 #- Inspect
 #   Allows the player to view the description of an item
-#- Command abreviation
-#   Certain commands (inv, and directional commands) have had abbreviated aliases added for the sake of convenience
+#  Command abbreviation (2)
+#   Multiple commands have added abbreviations such as inv(inventory) and movement.
+#  World Randomization (3)
+#  The world is primarily randomized in terms of loot distribution (container placement + contents) but is designed to be further randomized later on (starting location, exit location, monster starting location, etc). 
+
 player = Player()
 Spider = None
 
