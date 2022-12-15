@@ -38,6 +38,8 @@ import updater
 #   Minor feature mainly used in randomization. Certain rooms can be assigned tags and can therefor recieve different loot tables
 #- Inspect
 #   Allows the player to view the description of an item
+#- Command abreviation
+#   Certain commands (inv, and directional commands) have had abbreviated aliases added for the sake of convenience
 player = Player()
 Spider = None
 
