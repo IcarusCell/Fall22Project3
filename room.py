@@ -5,7 +5,7 @@ import containers
 
 class Room:
     rooms = []
-    def __init__(self, description, can_hide = True):
+    def __init__(self, description,tag = '', can_hide = False):
         self.desc = description
         self.monsters = []
         self.exits = []
@@ -13,6 +13,7 @@ class Room:
         self.searchable_items = []
         self.containers = []
         self.has_hiding_spots = can_hide
+        self.tag = tag
         Room.rooms.append(self)
     def add_exit(self, exit_name, destination):
         self.exits.append([exit_name, destination])
@@ -20,7 +21,6 @@ class Room:
         for e in self.exits:
             if e[0] == direction:
                 return e[1]
-        return self
     def connect_rooms(room1, dir1, room2, dir2):
         #creates "dir1" exit from room1 to room2 and vice versa
         room1.add_exit(dir1, room2)
@@ -53,8 +53,8 @@ class Room:
         return False
     def random_neighbor(self):
         return random.choice(self.exits)[1]
-    def add_container_with_searchable(self, name, desc):
-        cont = containers.Container(name, desc, None, None, self.searchable_items)
+    def add_container(self, name, desc):
+        cont = containers.Container(name, desc, None, None)
         self.containers.append(cont)
     def has_containers(self):
         return len(self.containers) > 0

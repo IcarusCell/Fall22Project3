@@ -9,16 +9,17 @@ possible_items = []
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 class Container:
-    def __init__(self, name, description, item=None, key_item=None, poss_items = None):
+    def __init__(self, name, description, item=None, key_item=None):
         self.items = []
-        if item == None and poss_items == None:
-            num_items = random.randint(1,3)
+        if item == None:
+            if len(possible_items) <= 2:
+                num_items = 1
+            else:
+                num_items = random.randint(1, 2)
             for _ in range(num_items):
-                self.items.append(possible_items[random.randint(0,len(possible_items)-1)])
-        elif item==None and poss_items != None:
-            num_items = random.randint(1,3)
-            for _ in range(num_items):
-                self.items.append(poss_items[random.randint(0,len(poss_items)-1)])
+                key = random.randint(0,len(possible_items)-1)
+                self.items.append(possible_items[key])
+                del possible_items[key]
         else:
             self.items.append(item)
         if key_item == None:

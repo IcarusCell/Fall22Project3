@@ -11,27 +11,38 @@ class Player:
     def __init__(self):
         self.location = None
         self.items = []
+        self.escape_room = None
         self.search_chance = 0.5
         self.wounded = False
         self.alive = True
         self.is_hidden = False
+        self.previous_location = None
     # goes in specified direction if possible, returns True
     # if not possible returns False
     def go_direction(self, direction):
         new_location = self.location.get_destination(direction.lower())
         if new_location is not None:
+            self.previous_location = self.location
             self.location = new_location
+            self.is_hidden = False
             return True
         return False
+
     def pickup(self, item):
-        self.items.append(item)
+        if item.has_passive:
+            item.passive_pickup(self)
         item.loc = self
+        self.items.append(item)
         self.location.remove_item(item)
+        self.is_hidden = False
     def open(self, container):
-        print('From the container you grab:')
+        print(f'From the {container.name} you grab:')
+        self.is_hidden = False
         for i in container.items:
             print(i.name)
             i.loc = self
+            if i.has_passive:
+                i.passive_pickup(self)
             self.items.append(i)
         print()
         self.location.remove_container(container)
@@ -61,12 +72,36 @@ class Player:
         print()
         input("Press enter to continue...")
     def drop_item(self, item):
-        print(self.items)
-        print(item)
+        self.is_hidden = False
         for i,ent in enumerate(self.items):
             if ent.name.lower() == item.lower():
                 self.location.items.append(ent)
+                if ent.has_passive:
+                    ent.passive_drop(self)
                 self.items.remove(ent)
                 return True
         return False
+    def player_description(self):
+        print('Current player status: ')
+        print('- Health -')
+        if self.wounded:
+            print('Blood trickles from your open wound, you definitely need to find a way to patch yourself up.')
+        else:
+            print('You are feeling fine, though this place does put you on edge.')
+        print('- Hiding -')
+        if self.is_hidden:
+            print('The cramped confines of your hiding space make you very uncomfortable, but it\'s better than facing what may be outside.')
+        else:
+            print('You are walking around in the open. Hopefully nothing can see you...')
+    def activate_item(self, item):
+        for i,ent in enumerate(self.items):
+            if ent.name.lower() == item.lower():
+                if ent.has_active:
+                    if ent.activate(self):
+                        if ent.has_passive:
+                            ent.passive_drop(self)
+                        self.items.remove(ent)
+                        return True
+        return False
+
 
